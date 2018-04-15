@@ -45,7 +45,7 @@ public class GetImageInternet { // Класс для запроса данных
         return new String(getUrlBytes(urlSpec)); //Преобразование ответа в строку
     }
 
-    public ArrayList<Data> getDatas(){
+    public ArrayList<Data> getDatas(int page){
 
         try {
             ArrayList<Data> datas = new ArrayList<>();
@@ -55,6 +55,7 @@ public class GetImageInternet { // Класс для запроса данных
                     .appendQueryParameter("api_key", API_KEY)
                     .appendQueryParameter("format", "json")
                     .appendQueryParameter("nojsoncallback", "1")
+                    .appendQueryParameter("page",String.valueOf(page))
                     .appendQueryParameter("extras", "url_s")
                     .build().toString();
             String jsonString = getUrlString(url);

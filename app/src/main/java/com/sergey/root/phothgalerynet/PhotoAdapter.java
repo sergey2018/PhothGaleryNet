@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 
+
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHoleder
 
     public PhotoAdapter(ArrayList<Data> dats) {
         mDats = dats;
+
     }
 
     @NonNull
@@ -38,6 +40,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHoleder
     public int getItemCount() {
         return mDats.size();
     }
+    public void addPhoto(ArrayList<Data> data){ //Добавление новых фото
+        for(int i = 0; i<data.size(); i++){
+            mDats.add(data.get(i));
+        }
+
+    }
 
     public class PhotoHoleder extends RecyclerView.ViewHolder{
         private ImageView mImageView;
@@ -47,7 +55,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHoleder
         }
         public void setPhoto(Data data){
             Picasso.get().load(data.getUrl()).into(mImageView);
-
         }
     }
 }
