@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -19,7 +17,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 
-/**
+
+/**r
  * A simple {@link Fragment} subclass.
  */
 public class PhotoListFragment extends Fragment {
@@ -31,34 +30,35 @@ public class PhotoListFragment extends Fragment {
     int pastVisiblesItems, visibleItemCount, totalItemCount;
     private PhotoAdapter mAdapter;
     Unbinder unbinder;
-    private GridLayoutManager mGrid;
+    private GridAutofitLayoutManager mGrid;
 
     public PhotoListFragment() {
         // Required empty public constructor
     }
 
 
-    private void setAdapter(final ArrayList<Data> datas){
+    private void setAdapter(final ArrayList<Photo> photos){
         if(isAdded()){
             if(mAdapter == null){
-                mAdapter = new PhotoAdapter(datas);
+
+                mAdapter = new PhotoAdapter(photos);
                 mPhotoList.setAdapter(mAdapter);
             }
             else {
-                mAdapter.addPhoto(datas);
+                mAdapter.addPhoto(photos);
                 mAdapter.notifyDataSetChanged();
             }
             mPhotoList.addOnItemTouchListener(new ClickListener(getActivity(), new ClickListener.OnItemClickListener() {
                 @Override
-                public void onItemClick(View view, int position) {
-                    String url = datas.get(position).getUrl();
-                    Intent intent = DetalActivity.newIntent(getActivity(),url);
+                public void onItemClick(View view, int position) { // Обработка нажатия
+                    String id = photos.get(position).getId();
+                    Intent intent = PhotoPagerActivity.newIntent(getActivity(),id);
                     startActivity(intent);
                 }
             }));
             mPhotoList.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) { // обработка прокрутки
                     super.onScrolled(recyclerView, dx, dy);
                     if(dy > 0){
                         visibleItemCount = mGrid.getChildCount();
@@ -81,10 +81,17 @@ public class PhotoListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_photo_list, container, false);
         unbinder = ButterKnife.bind(this, view);
-        mGrid = new GridLayoutManager(getActivity(),3);
+        mGrid = new GridAutofitLayoutManager(getActivity(),150);
         mPhotoList.setLayoutManager(mGrid);
-        setRetainInstance(true);
-        new PhotoTask().execute(page);
+        mPhotoList.addItemDecoration(new GridSpacesItemDecoration(3,false));
+        if(PhotoLab.getInstance().getLoad()){
+            new PhotoTask().execute(page);
+        }
+        else {
+            setAdapter(PhotoLab.getInstance().getPhotos());
+        }
+
+       // setRetainInstance(true);
         return view;
     }
 
@@ -94,17 +101,18 @@ public class PhotoListFragment extends Fragment {
         unbinder.unbind();
     }
 
-    private class PhotoTask extends AsyncTask<Integer,Void,ArrayList<Data>>{
+    private class PhotoTask extends AsyncTask<Integer,Void,ArrayList<Photo>>{
 
         @Override
-        protected ArrayList<Data> doInBackground(Integer... voids) {
+        protected ArrayList<Photo> doInBackground(Integer... voids) {
             return new GetImageInternet().getDatas(voids[0]);
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Data> data) {
+        protected void onPostExecute(ArrayList<Photo> data) {
             super.onPostExecute(data);
             if(data != null){
+                PhotoLab.getInstance().addPhoto(data);
                 setAdapter(data);
             }
         }

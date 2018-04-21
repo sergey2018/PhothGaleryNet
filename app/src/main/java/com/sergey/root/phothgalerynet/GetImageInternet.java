@@ -1,7 +1,6 @@
 package com.sergey.root.phothgalerynet;
 
 import android.net.Uri;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 public class GetImageInternet { // Класс для запроса данных из Интернета //работа с сервисом Flickr
     private static final String TAG = "FlickrFetchr";
 
-    private static final String API_KEY = "2cef31dfc6d9db43677a982332d345b7";
+    private static final String API_KEY = "2cef31dfc6d9db43677a982332d345b7"; // уникальный ключ
 
     public byte[] getUrlBytes(String urlSpec) throws IOException { //метод для запроса данных из интернета
         URL url = new URL(urlSpec);
@@ -45,11 +44,11 @@ public class GetImageInternet { // Класс для запроса данных
         return new String(getUrlBytes(urlSpec)); //Преобразование ответа в строку
     }
 
-    public ArrayList<Data> getDatas(int page){
+    public ArrayList<Photo> getDatas(int page){ // получение данных параметр запрос страницы
 
         try {
-            ArrayList<Data> datas = new ArrayList<>();
-            String url = Uri.parse("https://api.flickr.com/services/rest/")
+            ArrayList<Photo> photos = new ArrayList<>();
+            String url = Uri.parse("https://api.flickr.com/services/rest/") // Формирование данных
                     .buildUpon()
                     .appendQueryParameter("method", "flickr.photos.getRecent")
                     .appendQueryParameter("api_key", API_KEY)
@@ -64,18 +63,17 @@ public class GetImageInternet { // Класс для запроса данных
             JSONArray jsonArray = JObject.getJSONArray("photo");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject JsonI = jsonArray.getJSONObject(i);
-                Data data = new Data();
-                Log.d(TAG, i + "");
-                data.setCaption(JsonI.getString("title"));
-                data.setId(JsonI.getString("id"));
+                Photo photo = new Photo();
+                photo.setCaption(JsonI.getString("title"));
+                photo.setId(JsonI.getString("id"));
                 if (!JsonI.has("url_s")) {
                     continue;
                 }
-                data.setUrl(JsonI.getString("url_s"));
-                datas.add(data);
+                photo.setUrl(JsonI.getString("url_s"));
+                photos.add(photo);
 
             }
-            return datas;
+            return photos;
         }
          catch (IOException e) {
             e.printStackTrace();

@@ -1,9 +1,9 @@
 package com.sergey.root.phothgalerynet;
 
-public class Data {
-    private String mCaption;
-    private String mId;
-    private String mUrl;
+public class Photo {
+    private String mCaption; // Описание
+    private String mId; // идентификатор
+    private String mUrl;//адрес картинки
 
     public String getCaption() {
         return mCaption;

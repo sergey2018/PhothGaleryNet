@@ -1,12 +1,10 @@
 package com.sergey.root.phothgalerynet;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 
 
@@ -16,9 +14,9 @@ import java.util.ArrayList;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHoleder>{
 
-    private ArrayList<Data> mDats;
+    private ArrayList<Photo> mDats;
 
-    public PhotoAdapter(ArrayList<Data> dats) {
+    public PhotoAdapter(ArrayList<Photo> dats) {
         mDats = dats;
 
     }
@@ -32,15 +30,15 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHoleder
 
     @Override
     public void onBindViewHolder(@NonNull PhotoHoleder holder, int position) {
-        Data data = mDats.get(position);
-        holder.setPhoto(data);
+        Photo photo = mDats.get(position);
+        holder.setPhoto(photo);
     }
 
     @Override
     public int getItemCount() {
         return mDats.size();
     }
-    public void addPhoto(ArrayList<Data> data){ //Добавление новых фото
+    public void addPhoto(ArrayList<Photo> data){ //Добавление новых фото
         for(int i = 0; i<data.size(); i++){
             mDats.add(data.get(i));
         }
@@ -53,8 +51,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHoleder
             super(itemView);
             mImageView = itemView.findViewById(R.id.image_view);
         }
-        public void setPhoto(Data data){
-            Picasso.get().load(data.getUrl()).into(mImageView);
+        public void setPhoto(Photo photo){
+            Picasso.get().load(photo.getUrl()).into(mImageView);
         }
     }
 }
